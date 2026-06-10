@@ -793,7 +793,6 @@ function drawPipelines() {
         const el2 = document.getElementById(pipe.to);
         if (!el1 || !el2) return;
 
-        // 節點邊框
         const rect1 = {
             left: el1.offsetLeft,
             top: el1.offsetTop,
@@ -807,7 +806,6 @@ function drawPipelines() {
             bottom: el2.offsetTop + el2.offsetHeight
         };
 
-        // 節點中心
         const c1 = {
             x: el1.offsetLeft + el1.offsetWidth / 2,
             y: el1.offsetTop + el1.offsetHeight / 2
@@ -817,31 +815,25 @@ function drawPipelines() {
             y: el2.offsetTop + el2.offsetHeight / 2
         };
 
-        // 冷熱管偏移
         const offset = pipe.type === 'cold' ? -12 : 12;
         const vc1 = { x: c1.x + offset, y: c1.y + offset };
         const vc2 = { x: c2.x + offset, y: c2.y + offset };
 
-        // 計算邊框連接點
         const startBorder = lineRectIntersection(vc1, vc2, rect1);
         const endBorder   = lineRectIntersection(vc2, vc1, rect2);
 
-        // ========== 智能正交路由（取代固定 L 型） ==========
+        // 智能正交路由（取代固定 L 型）
         const dx = endBorder.x - startBorder.x;
         const dy = endBorder.y - startBorder.y;
 
         let pathPoints;
-
-        // 根據水平與垂直距離決定先走哪個方向
         if (Math.abs(dx) > Math.abs(dy) * 0.75) {
-            // 水平距離較長 → 先水平再垂直
             pathPoints = [
                 startBorder,
                 { x: endBorder.x, y: startBorder.y },
                 endBorder
             ];
         } else {
-            // 垂直距離較長或接近 → 先垂直再水平
             pathPoints = [
                 startBorder,
                 { x: startBorder.x, y: endBorder.y },
@@ -849,7 +841,6 @@ function drawPipelines() {
             ];
         }
 
-        // 產生 SVG path 字串
         let pathData = `M ${pathPoints[0].x} ${pathPoints[0].y}`;
         for (let i = 1; i < pathPoints.length; i++) {
             pathData += ` L ${pathPoints[i].x} ${pathPoints[i].y}`;
@@ -858,7 +849,6 @@ function drawPipelines() {
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.style.cursor = 'pointer';
 
-        // 底線
         const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         baseLine.setAttribute('d', pathData);
         baseLine.setAttribute('fill', 'none');
@@ -867,7 +857,6 @@ function drawPipelines() {
         baseLine.setAttribute('opacity', '0.4');
         group.appendChild(baseLine);
 
-        // 繪製箭頭（支援多段）
         for (let i = 0; i < pathPoints.length - 1; i++) {
             drawArrowsOnSegment(
                 group,
@@ -877,7 +866,6 @@ function drawPipelines() {
             );
         }
 
-        // 點擊刪除區域
         const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         hitArea.setAttribute('d', pathData);
         hitArea.setAttribute('fill', 'none');
@@ -903,7 +891,6 @@ function drawPipelines() {
         svg.appendChild(group);
     });
 }
-
     function drawArrowsOnSegment(group, xStart, yStart, xEnd, yEnd, type) {
         const dx = xEnd - xStart;
         const dy = yEnd - yStart;
