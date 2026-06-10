@@ -820,9 +820,9 @@ function drawPipelines() {
         const vc2 = { x: c2.x + offset, y: c2.y + offset };
 
         const startBorder = lineRectIntersection(vc1, vc2, rect1);
-        const endBorder   = lineRectIntersection(vc2, vc1, rect2);
+        const endBorder = lineRectIntersection(vc2, vc1, rect2);
 
-        // 智能正交路由（取代固定 L 型）
+        // 智能正交路由
         const dx = endBorder.x - startBorder.x;
         const dy = endBorder.y - startBorder.y;
 
@@ -841,9 +841,10 @@ function drawPipelines() {
             ];
         }
 
-        let pathData = `M ${pathPoints[0].x} ${pathPoints[0].y}`;
+        // 使用 + 串接字串（比較安全）
+        let pathData = "M " + pathPoints[0].x + " " + pathPoints[0].y;
         for (let i = 1; i < pathPoints.length; i++) {
-            pathData += ` L ${pathPoints[i].x} ${pathPoints[i].y}`;
+            pathData += " L " + pathPoints[i].x + " " + pathPoints[i].y;
         }
 
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
